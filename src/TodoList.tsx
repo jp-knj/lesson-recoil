@@ -59,11 +59,10 @@ function TodoItem({item}) {
     const [todoList, setTodoList] = useRecoilState(todoListState);
     const index = todoList.findIndex((listItem) => listItem === item);
 
-    // @ts-ignore
-    const editItemText = ({target: {value}}) => {
+    const handleEditItemText = (ev: React.ChangeEvent<HTMLInputElement>) => {
         const newList = replaceItemAtIndex(todoList, index, {
             ...item,
-            text: value,
+            text: ev.target.value,
         });
 
         // @ts-ignore
@@ -89,7 +88,7 @@ function TodoItem({item}) {
 
     return (
         <div>
-            <input type="text" value={item.text} onChange={editItemText} />
+            <input type="text" value={item.text} onChange={handleEditItemText} />
             <input
                 type="checkbox"
                 checked={item.isComplete}
