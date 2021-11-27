@@ -174,15 +174,15 @@ function TodoListStats() {
 
 function TodoListFilters() {
     const [filter, setFilter] = useRecoilState(todoListFilterState);
-    //@ts-ignore
-    const updateFilter = ({target: {value}}) => {
-        setFilter(value);
+
+    const handleUpdateFilter = (ev: React.ChangeEvent<HTMLSelectElement>) => {
+        setFilter(ev.target.value);
     };
 
     return (
         <>
             Filter:
-            <select value={filter} onChange={updateFilter}>
+            <select value={filter} onChange={handleUpdateFilter}>
                 <option value="Show All">All</option>
                 <option value="Show Completed">Completed</option>
                 <option value="Show Uncompleted">Uncompleted</option>
