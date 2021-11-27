@@ -13,6 +13,12 @@ const todoListState = atom({
     default: [],
 });
 
+export interface Todo {
+    id: string
+    text: string
+    isCompleted: boolean
+}
+
 function TodoItemCreator() {
     const [inputValue, setInputValue] = React.useState('');
     const setTodoList = useSetRecoilState(todoListState);
@@ -30,14 +36,13 @@ function TodoItemCreator() {
         setInputValue('');
     };
 
-    // @ts-ignore
-    const onChange = ({target: {value}}) => {
-        setInputValue(value);
+    const handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
+        setInputValue(ev.target.value);
     };
 
     return (
         <div>
-            <input type="text" value={inputValue} onChange={onChange} />
+            <input type="text" value={inputValue} onChange={handleChange} />
             <button onClick={addItem}>Add</button>
         </div>
     );
@@ -116,7 +121,7 @@ const todoListStatsState = selector({
         const todoList = get(todoListState);
         const totalNum = todoList.length;
         //@ts-ignore
-        const totalCompletedNum = todoList.filter((item) => item.isComplete).length;
+        const totalCompletedNum:number = todoList.filter((item) => item.isComplete).length;
         const totalUncompletedNum = totalNum - totalCompletedNum;
         const percentCompleted = totalNum === 0 ? 0 : totalCompletedNum / totalNum * 100;
 
