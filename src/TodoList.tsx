@@ -60,6 +60,7 @@ function TodoItem({item}) {
     const index = todoList.findIndex((listItem) => listItem === item);
 
     const handleEditItemText = (ev: React.ChangeEvent<HTMLInputElement>) => {
+        // @ts-ignore
         const newList = replaceItemAtIndex(todoList, index, {
             ...item,
             text: ev.target.value,
@@ -70,6 +71,7 @@ function TodoItem({item}) {
     };
 
     const toggleItemCompletion = () => {
+        // @ts-ignore
         const newList = replaceItemAtIndex(todoList, index, {
             ...item,
             isComplete: !item.isComplete,
@@ -98,14 +100,11 @@ function TodoItem({item}) {
         </div>
     );
 }
-
-// @ts-ignore
-function replaceItemAtIndex(arr, index, newValue) {
+function replaceItemAtIndex(arr: [], index: number, newValue:[]) {
     return [...arr.slice(0, index), newValue, ...arr.slice(index + 1)];
 }
 
-// @ts-ignore
-function removeItemAtIndex(arr, index) {
+function removeItemAtIndex(arr:[], index:number) {
     return [...arr.slice(0, index), ...arr.slice(index + 1)];
 }
 
