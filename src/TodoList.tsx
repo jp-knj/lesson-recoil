@@ -82,6 +82,7 @@ function TodoItem({item}) {
     };
 
     const deleteItem = () => {
+        // @ts-ignore
         const newList = removeItemAtIndex(todoList, index);
 
         // @ts-ignore
@@ -176,6 +177,7 @@ function TodoListFilters() {
 
     const handleUpdateFilter = (ev: React.ChangeEvent<HTMLSelectElement>) => {
         setFilter(ev.target.value);
+        console.log("Call: handleUpdateFilter")
     };
 
     return (
@@ -191,7 +193,7 @@ function TodoListFilters() {
 }
 
 function TodoList() {
-    const todoList = useRecoilValue(todoListState);
+    const todoList = useRecoilValue(filteredTodoListState);
 
     return (
         <>
