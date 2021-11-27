@@ -5,12 +5,105 @@ import {
     selector,
     useRecoilState,
     useRecoilValue,
+    useSetRecoilState,
 } from 'recoil';
 
 const todoListState = atom({
     key: 'todoListState',
     default: [],
 });
+
+function TodoItemCreator() {
+    const [inputValue, setInputValue] = React.useState('');
+    const setTodoList = useSetRecoilState(todoListState);
+
+    const addItem = () => {
+        // @ts-ignore
+        setTodoList((oldTodoList) => [
+            ...oldTodoList,
+            {
+                id: getId(),
+                text: inputValue,
+                isComplete: false,
+            },
+        ]);
+        setInputValue('');
+    };
+
+    // @ts-ignore
+    const onChange = ({target: {value}}) => {
+        setInputValue(value);
+    };
+
+    return (
+        <div>
+            <input type="text" value={inputValue} onChange={onChange} />
+            <button onClick={addItem}>Add</button>
+        </div>
+    );
+}
+
+// utility for creating unique Id
+let id = 0;
+function getId() {
+    return id++;
+}
+
+// @ts-ignore
+function TodoItem({item}) {
+    const [todoList, setTodoList] = useRecoilState(todoListState);
+    const index = todoList.findIndex((listItem) => listItem === item);
+
+    // @ts-ignore
+    const editItemText = ({target: {value}}) => {
+        const newList = replaceItemAtIndex(todoList, index, {
+            ...item,
+            text: value,
+        });
+
+        // @ts-ignore
+        setTodoList(newList);
+    };
+
+    const toggleItemCompletion = () => {
+        const newList = replaceItemAtIndex(todoList, index, {
+            ...item,
+            isComplete: !item.isComplete,
+        });
+
+        // @ts-ignore
+        setTodoList(newList);
+    };
+
+    const deleteItem = () => {
+        const newList = removeItemAtIndex(todoList, index);
+
+        // @ts-ignore
+        setTodoList(newList);
+    };
+
+    return (
+        <div>
+            <input type="text" value={item.text} onChange={editItemText} />
+            <input
+                type="checkbox"
+                checked={item.isComplete}
+                onChange={toggleItemCompletion}
+            />
+            <button onClick={deleteItem}>X</button>
+        </div>
+    );
+}
+
+// @ts-ignore
+function replaceItemAtIndex(arr, index, newValue) {
+    return [...arr.slice(0, index), newValue, ...arr.slice(index + 1)];
+}
+
+// @ts-ignore
+function removeItemAtIndex(arr, index) {
+    return [...arr.slice(0, index), ...arr.slice(index + 1)];
+}
 
 function TodoList() {
     const todoList = useRecoilValue(todoListState);
@@ -22,6 +115,7 @@ function TodoList() {
             <TodoItemCreator />
 
             {todoList.map((todoItem) => (
+                // @ts-ignore
                 <TodoItem key={todoItem.id} item={todoItem} />
             ))}
         </>

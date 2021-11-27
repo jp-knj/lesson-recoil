@@ -4,10 +4,13 @@ import './index.css';
 // import App from './App';
 import reportWebVitals from './reportWebVitals';
 import TodoList from "./TodoList";
+import {RecoilRoot} from "recoil";
 
 ReactDOM.render(
   <React.StrictMode>
-      <TodoList />
+      <RecoilRoot>
+          <TodoList />
+      </RecoilRoot>
   </React.StrictMode>,
   document.getElementById('root')
 );
