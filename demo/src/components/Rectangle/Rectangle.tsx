@@ -1,8 +1,9 @@
 import {useContext} from 'react'
-import {ElementsContext, SelectedElementContext} from '../../Canvas'
+import {ElementsContext, selectedElementState} from '../../Canvas'
 import {Drag} from '../Drag'
 import {RectangleContainer} from './RectangleContainer'
 import {RectangleInner} from './RectangleInner'
+import {useRecoilState} from "recoil";
 
 export type ElementStyle = {
     position: {top: number; left: number}
@@ -12,7 +13,7 @@ export type ElementStyle = {
 export type Element = {style: ElementStyle}
 
 export const Rectangle = ({element, index}: {element: Element; index: number}) => {
-    const {selectedElement, setSelectedElement} = useContext(SelectedElementContext)
+    const [selectedElement, setSelectedElement] = useRecoilState(selectedElementState)
     const {setElement} = useContext(ElementsContext)
 
     return (
