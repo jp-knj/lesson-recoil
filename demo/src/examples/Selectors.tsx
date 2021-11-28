@@ -60,15 +60,18 @@ const InputStack: React.FC = ({children}) => {
 
 const CurrencyInput = ({amount, onChange, label,}: { label: string, amount: number, onChange?: (amount: number) => void }) => {
     let symbol = label === 'usd' ? '$' : '€'
+
+    const handleChange = (value:string) => {
+        const withoutSymbol = value.split(' ')[0]
+        onChange?.(parseFloat(withoutSymbol || '0'))
+    }
+
     return (
         <FormControl id={label.toUpperCase()}>
             <FormLabel>{label.toUpperCase()}</FormLabel>
             <NumberInput
                 value={`${symbol} ${amount}`}
-                onChange={(value) => {
-                    const withoutSymbol = value.split(' ')[0]
-                    onChange?.(parseFloat(withoutSymbol || '0'))
-                }}
+                onChange={handleChange}
             >
                 <NumberInputField />
             </NumberInput>
