@@ -22,7 +22,13 @@ const usdAtom = atom({
 const eurSelector = selector<number>({
     key: 'eur',
     get: ({get}) => {
-        const usd = get(usdAtom)
+        let usd = get(usdAtom)
+
+        const commitionEnabled = get(commissionEnabledAtom)
+        if(commitionEnabled){
+            const commition = get(commissionAtom)
+            usd = removeCommission(usd, commition)
+        }
         return usd * exchangeRate
     },
     set: ({set}, newEurValue) => {
@@ -92,8 +98,19 @@ const CurrencyInput = ({amount, onChange, label,}: { label: string, amount: numb
     )
 }
 
+const commissionEnabledAtom = atom({
+    key: 'commissionEnabled',
+    default: false,
+})
+
+const commissionAtom = atom({
+    key: 'commission',
+    default: 5,
+})
 
 const Commission = () => {
+    const [enabled, setEnabled] = useRecoilState(commissionEnabledAtom)
+    const [commission, setCommission] = useRecoilState(commissionAtom)
     return (
         <Box width="300px">
             <FormControl display="flex" alignItems="center" mb={2}>
@@ -102,19 +119,25 @@ const Commission = () => {
                 </FormLabel>
                 <Switch
                     id="includeCommission"
+                    isChecked={enabled}
+                    onChange={(event) => setEnabled(event.currentTarget.checked)}
                 />
             </FormControl>
-            <NumberInput>
+            <NumberInput
+                isDisabled={!enabled}
+                value={commission}
+                onChange={(value) => setCommission(parseFloat(value || '0'))}
+            >
                 <NumberInputField />
             </NumberInput>
         </Box>
     )
 }
 
-// const addCommission = (amount: number, commission: number) => {
-//     return amount / (1 - commission / 100)
-// }
+const addCommission = (amount: number, commission: number) => {
+    return amount / (1 - commission / 100)
+}
 
-// const removeCommission = (amount: number, commission: number) => {
-//     return amount * (1 - commission / 100)
-// }
+const removeCommission = (amount: number, commission: number) => {
+    return amount * (1 - commission / 100)
+}
