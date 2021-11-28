@@ -10,7 +10,7 @@ import {
     Switch,
 } from '@chakra-ui/react'
 import {ArrowRight} from 'react-feather'
-import {atom, selector, useRecoilState, useRecoilValue} from "recoil";
+import {atom, selector, useRecoilState} from "recoil";
 
 const exchangeRate = 0.83
 
@@ -19,17 +19,20 @@ const usdAtom = atom({
     default: 1,
 })
 
-const eurSelector = selector({
+const eurSelector = selector<number>({
     key: 'eur',
     get: ({get}) => {
         const usd = get(usdAtom)
         return usd * exchangeRate
+    },
+    set: ({}, newEurValue) => {
+        console.log('Set value', newEurValue)
     }
 })
 
 export const Selectors = () => {
     const [usd, setUSD] = useRecoilState(usdAtom)
-    const eur = useRecoilValue(eurSelector)
+    const [eur, setEur] = useRecoilState(eurSelector)
 
     return (
         <div style={{padding: 20}}>
@@ -38,7 +41,7 @@ export const Selectors = () => {
             </Heading>
             <InputStack>
                 <CurrencyInput label="usd" amount={usd}  onChange={(usd)=> setUSD(usd)}/>
-                <CurrencyInput label="eur" amount={eur}  />
+                <CurrencyInput label="eur" amount={eur}  onChange={(eur) => setEur(eur)} />
             </InputStack>
             <Commission />
         </div>
@@ -106,10 +109,10 @@ const Commission = () => {
     )
 }
 
-const addCommission = (amount: number, commission: number) => {
-    return amount / (1 - commission / 100)
-}
+// const addCommission = (amount: number, commission: number) => {
+//     return amount / (1 - commission / 100)
+// }
 
-const removeCommission = (amount: number, commission: number) => {
-    return amount * (1 - commission / 100)
-}
+// const removeCommission = (amount: number, commission: number) => {
+//     return amount * (1 - commission / 100)
+// }
