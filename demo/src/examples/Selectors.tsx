@@ -10,18 +10,26 @@ import {
     Switch,
 } from '@chakra-ui/react'
 import {ArrowRight} from 'react-feather'
+import {atom, useRecoilState} from "recoil";
 
 const exchangeRate = 0.83
 
-export const Selectors = () => {
+const usdAtom = atom({
+    key: 'usd',
+    default: 1,
+})
 
+export const Selectors = () => {
+    const [usd, setUSD] = useRecoilState(usdAtom)
+
+    const handleChange = (usd:number) => setUSD(usd)
     return (
         <div style={{padding: 20}}>
             <Heading size="lg" mb={2}>
                 Currency converter
             </Heading>
             <InputStack>
-                <CurrencyInput label="usd" amount={0}  />
+                <CurrencyInput label="usd" amount={usd}  onChange={(usd)=> setUSD(usd)}/>
                 <CurrencyInput label="eur" amount={0}  />
             </InputStack>
             <Commission />
@@ -57,6 +65,10 @@ const CurrencyInput = ({amount, onChange, label,}: { label: string, amount: numb
             <FormLabel>{label.toUpperCase()}</FormLabel>
             <NumberInput
                 value={`${symbol} ${amount}`}
+                onChange={(value) => {
+                    const withoutSymbol = value.split(' ')[0]
+                    onChange?.(parseFloat(withoutSymbol || '0'))
+                }}
             >
                 <NumberInputField />
             </NumberInput>
