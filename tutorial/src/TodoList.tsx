@@ -1,4 +1,5 @@
 import React from 'react';
+import type { RecoilState } from 'recoil'
 import {
     RecoilRoot,
     atom,
@@ -8,33 +9,41 @@ import {
     useSetRecoilState,
 } from 'recoil';
 
-const todoListState = atom({
-    key: 'todoListState',
-    default: [],
-});
-
-export interface Todo {
+export type Todo = {
     id: string
     text: string
     isCompleted: boolean
 }
 
+const todoListState = atom({
+    key: 'todoListState',
+    default: [],
+});
+
 function TodoItemCreator() {
     const [inputValue, setInputValue] = React.useState('');
     const setTodoList = useSetRecoilState(todoListState);
 
-    const addItem = () => {
-        // @ts-ignore
-        setTodoList((oldTodoList) => [
-            ...oldTodoList,
-            {
-                id: getId(),
-                text: inputValue,
-                isComplete: false,
-            },
-        ]);
-        setInputValue('');
-    };
+    let id:number = 0;
+    function getId():number {
+        return id++;
+    }
+
+    // const addItem = () => {
+    //     setTodoList( oldTodoList => [
+    //         ...oldTodoList,
+    //         {
+    //             id: getId(),
+    //             text: inputValue,
+    //             isComplete: false,
+    //         },
+    //     ]);
+    //     setInputValue('');
+    // };
+    const handleClick = (ev:React.MouseEvent<HTMLButtonElement>) => {
+        setTodoList(currVal => [...currVal, {}])
+
+    }
 
     const handleChange = (ev: React.ChangeEvent<HTMLInputElement>) => {
         setInputValue(ev.target.value);
@@ -43,22 +52,16 @@ function TodoItemCreator() {
     return (
         <div>
             <input type="text" value={inputValue} onChange={handleChange} />
-            <button onClick={addItem}>Add</button>
+            <button onClick={handleClick}>Add</button>
         </div>
     );
 }
 
-// utility for creating unique Id
-let id = 0;
-function getId() {
-    return id++;
-}
 
-// @ts-ignore
-function TodoItem({item}) {
+
+function TodoItem({item}:any) {
     const [todoList, setTodoList] = useRecoilState(todoListState);
-    const index = todoList.findIndex((listItem) => listItem === item);
-
+    const index = todoList.findIndex((listItem) => console.log(listItem));
     const handleEditItemText = (ev: React.ChangeEvent<HTMLInputElement>) => {
         // @ts-ignore
         const newList = replaceItemAtIndex(todoList, index, {
@@ -88,7 +91,6 @@ function TodoItem({item}) {
         // @ts-ignore
         setTodoList(newList);
     };
-
     return (
         <div>
             <input type="text" value={item.text} onChange={handleEditItemText} />
@@ -177,7 +179,6 @@ function TodoListFilters() {
 
     const handleUpdateFilter = (ev: React.ChangeEvent<HTMLSelectElement>) => {
         setFilter(ev.target.value);
-        console.log("Call: handleUpdateFilter")
     };
 
     return (
