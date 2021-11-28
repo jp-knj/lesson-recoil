@@ -31,9 +31,15 @@ const eurSelector = selector<number>({
         }
         return usd * exchangeRate
     },
-    set: ({set}, newEurValue) => {
+    set: ({set, get}, newEurValue) => {
         // @ts-ignore
-        const newUsdValue = newEurValue / exchangeRate
+        let newUsdValue = newEurValue / exchangeRate
+
+        const commitionEnabled = get(commissionEnabledAtom)
+        if(commitionEnabled){
+            const commission = get(commissionAtom)
+            newUsdValue = addCommission(newUsdValue, commission)
+        }
         set(usdAtom, newUsdValue)
     }
 })
