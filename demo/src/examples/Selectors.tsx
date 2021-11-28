@@ -25,8 +25,10 @@ const eurSelector = selector<number>({
         const usd = get(usdAtom)
         return usd * exchangeRate
     },
-    set: ({}, newEurValue) => {
-        console.log('Set value', newEurValue)
+    set: ({set}, newEurValue) => {
+        // @ts-ignore
+        const newUsdValue = newEurValue / exchangeRate
+        set(usdAtom, newUsdValue)
     }
 })
 
