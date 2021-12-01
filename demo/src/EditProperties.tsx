@@ -1,10 +1,26 @@
 import {InputGroup, InputRightElement, NumberInput, NumberInputField, Text, VStack} from '@chakra-ui/react'
+import {selector, useRecoilValue} from 'recoil'
+import {selectedElementState, elementState} from "./components/Rectangle/Rectangle";
+
+const selectedElementProperties = selector({
+    key: 'selectedElementProperties',
+    get:({get}) => {
+        const selectedElementId = get(selectedElementState)
+        if (selectedElementId === null) return
+
+        return get(elementState(selectedElementId))
+    }
+})
 
 export const EditProperties = () => {
+    const element = useRecoilValue(selectedElementProperties)
+    console.log(element)
+    if(!element) return null
+
     return (
         <Card>
             <Section heading="Position">
-                <Property label="Top" value={1} onChange={(top) => {}} />
+                <Property label="Top" value={element.position.top} onChange={(top) => {}} />
                 <Property label="Left" value={1} onChange={(left) => {}} />
             </Section>
         </Card>

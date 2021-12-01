@@ -1,8 +1,7 @@
-import {selectedElementState} from '../../Canvas'
 import {Drag} from '../Drag'
 import {RectangleContainer} from './RectangleContainer'
 import {RectangleInner} from './RectangleInner'
-import {atomFamily, useRecoilState} from "recoil";
+import {atom, atomFamily, useRecoilState} from "recoil";
 
 export type ElementStyle = {
     position: {top: number; left: number}
@@ -11,14 +10,19 @@ export type ElementStyle = {
 
 export type Element = {style: ElementStyle}
 
-const elementState = atomFamily<Element, number>({
+export const elementState = atomFamily<Element, number>({
     key: 'element',
     default: {
         style: {
             position: {top: 0, left: 0},
-            size:{width: 50, height:50}
+            size:{width: 200, height: 200}
         }
     }
+})
+
+export const selectedElementState = atom<number | null>({
+    key: 'selectedElement',
+    default: null
 })
 
 export const Rectangle = ({id}:{id:number}) => {
