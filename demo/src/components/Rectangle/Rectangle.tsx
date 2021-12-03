@@ -2,6 +2,7 @@ import {Drag} from '../Drag'
 import {RectangleContainer} from './RectangleContainer'
 import {RectangleInner} from './RectangleInner'
 import {atom, atomFamily, useRecoilState} from "recoil";
+import {Resize} from "../Resize";
 
 export type ElementStyle = {
     position: {top: number; left: number}
@@ -29,7 +30,16 @@ export const Rectangle = ({id}:{id:number}) => {
     const [selectedElement, setSelectedElement] = useRecoilState(selectedElementState)
     const [element, setElement] = useRecoilState((elementState(id)))
 
+    const selected = selectedElement === id;
     return (
+    <RectangleContainer
+        position={element.style.position}
+        size={element.style.size}
+        onSelect={() => {
+            setSelectedElement(id)
+        }}
+    >
+        <Resize selected={selected} onResize={(style => setElement({...element,style}))} position={element.style.position} size={element.style.size}>
         <Drag
             position={element.style.position}
             onDrag={(position) => {
@@ -42,16 +52,10 @@ export const Rectangle = ({id}:{id:number}) => {
             }}
         >
             <div>
-                <RectangleContainer
-                    position={element.style.position}
-                    size={element.style.size}
-                    onSelect={() => {
-                        setSelectedElement(id)
-                    }}
-                >
-                    <RectangleInner selected={id=== selectedElement} />
-                </RectangleContainer>
+                <RectangleInner selected={id=== selectedElement} />
             </div>
         </Drag>
+        </Resize>
+    </RectangleContainer>
     )
 }

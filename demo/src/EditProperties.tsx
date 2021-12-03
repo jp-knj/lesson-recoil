@@ -35,11 +35,28 @@ export const EditProperties = () => {
             }
         })
     }
+
+    const setSize= (property: 'width'| 'height', value:number) => {
+        setElement({
+            ...element,
+            style: {
+                ...element.style,
+                size: {
+                    ...element.style.size,
+                    [property]:value
+                }
+            }
+        })
+    }
     return (
         <Card>
             <Section heading="Position">
                 <Property label="Top" value={element.style.position.top} onChange={(top) => setPostion('top', top)} />
                 <Property label="Left" value={element.style.position.left} onChange={(left) => setPostion('left', left)} />
+            </Section>
+            <Section heading="Size">
+                <Property label="Width" value={element.style.size.width} onChange={(top) => setPostion('top', top)} />
+                <Property label="Height" value={element.style.size.height} onChange={(left) => setPostion('left', left)} />
             </Section>
         </Card>
     )
