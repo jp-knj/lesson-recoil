@@ -1,27 +1,45 @@
 import {InputGroup, InputRightElement, NumberInput, NumberInputField, Text, VStack} from '@chakra-ui/react'
-import {selector, useRecoilValue} from 'recoil'
-import {selectedElementState, elementState} from "./components/Rectangle/Rectangle";
+import {selector, useRecoilState} from 'recoil'
+import {Element, elementState, selectedElementState} from './components/Rectangle/Rectangle'
 
-const selectedElementProperties = selector({
+const selectedElementProperties = selector<Element | undefined>({
     key: 'selectedElementProperties',
     get:({get}) => {
         const selectedElementId = get(selectedElementState)
         if (selectedElementId === null) return
 
         return get(elementState(selectedElementId))
+    },
+    set:({get, set}, newElement) => {
+        const selectedElementId = get(selectedElementState)
+        if(selectedElementId == null) return
+        if(!newElement) return
+
+        set(elementState(selectedElementId), newElement)
     }
 })
 
 export const EditProperties = () => {
-    const element = useRecoilValue(selectedElementProperties)
-    console.log(element)
+    const [element, setElement] = useRecoilState(selectedElementProperties)
     if(!element) return null
 
+    const setPostion = (property: 'top'| 'left', value:number) => {
+        setElement({
+            ...element,
+            style: {
+                ...element.style,
+                position: {
+                    ...element.style.position,
+                    [property]:value
+                }
+            }
+        })
+    }
     return (
         <Card>
             <Section heading="Position">
-                <Property label="Top" value={element.position.top} onChange={(top) => {}} />
-                <Property label="Left" value={1} onChange={(left) => {}} />
+                <Property label="Top" value={element.style.position.top} onChange={(top) => setPostion('top', top)} />
+                <Property label="Left" value={element.style.position.left} onChange={(left) => setPostion('left', left)} />
             </Section>
         </Card>
     )
