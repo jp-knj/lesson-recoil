@@ -2,61 +2,79 @@ import {InputGroup, InputRightElement, NumberInput, NumberInputField, Text, VSta
 import {selector, useRecoilState} from 'recoil'
 import {Element, elementState, selectedElementState} from './components/Rectangle/Rectangle'
 
-const selectedElementProperties = selector<Element | undefined>({
+const selectedElementPropertiesState = selector<Element | undefined>({
     key: 'selectedElementProperties',
-    get:({get}) => {
-        const selectedElementId = get(selectedElementState)
-        if (selectedElementId === null) return
+    get: ({get}) => {
+        const selectedElement = get(selectedElementState)
+        if (selectedElement == null) return
 
-        return get(elementState(selectedElementId))
+        return get(elementState(selectedElement))
     },
-    set:({get, set}, newElement) => {
-        const selectedElementId = get(selectedElementState)
-        if(selectedElementId == null) return
-        if(!newElement) return
+    set: ({get, set}, newElement) => {
+        if (!newElement) return
 
-        set(elementState(selectedElementId), newElement)
-    }
+        const selectedElement = get(selectedElementState)
+        if (selectedElement == null) return
+
+        set(elementState(selectedElement), newElement)
+    },
 })
 
 export const EditProperties = () => {
-    const [element, setElement] = useRecoilState(selectedElementProperties)
-    if(!element) return null
+    const [element, setElement] = useRecoilState(selectedElementPropertiesState)
+    if (!element) return null
 
-    const setPostion = (property: 'top'| 'left', value:number) => {
+    const updatePosition = (property: 'top' | 'left', value: number) => {
         setElement({
             ...element,
             style: {
                 ...element.style,
                 position: {
                     ...element.style.position,
-                    [property]:value
-                }
-            }
+                    [property]: value,
+                },
+            },
         })
     }
 
-    const setSize= (property: 'width'| 'height', value:number) => {
+    const updateSize = (property: 'width' | 'height', value: number) => {
         setElement({
             ...element,
             style: {
                 ...element.style,
                 size: {
                     ...element.style.size,
-                    [property]:value
-                }
-            }
+                    [property]: value,
+                },
+            },
         })
     }
+
     return (
         <Card>
             <Section heading="Position">
-                <Property label="Top" value={element.style.position.top} onChange={(top) => setPostion('top', top)} />
-                <Property label="Left" value={element.style.position.left} onChange={(left) => setPostion('left', left)} />
+                <Property
+                    label="Top"
+                    value={element.style.position.top}
+                    onChange={(top) => updatePosition('top', top)}
+                />
+                <Property
+                    label="Left"
+                    value={element.style.position.left}
+                    onChange={(left) => updatePosition('left', left)}
+                />
             </Section>
             <Section heading="Size">
-                <Property label="Width" value={element.style.size.width} onChange={(top) => setPostion('top', top)} />
-                <Property label="Height" value={element.style.size.height} onChange={(left) => setPostion('left', left)} />
+                <Property
+                    label="Width"
+                    value={element.style.size.width}
+                    onChange={(width) => updateSize('width', width)}
+                />
+                <Property
+                    label="Height"
+                    value={element.style.size.height}
+                    onChange={(height) => updateSize('height', height)}
+                />
             </Section>
         </Card>
     )
